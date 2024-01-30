@@ -1,0 +1,10 @@
+ansible_ssh_user: vagrant
+
+packages_needed:
+  - curl
+  - gpg
+  - docker
+  - docker-compose
+
+pgadmin_email: test@test.com
+pgadmin_password: coucou

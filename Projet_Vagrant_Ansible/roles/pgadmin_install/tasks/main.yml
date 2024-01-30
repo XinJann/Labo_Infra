@@ -1,0 +1,54 @@
+
+#sudo echo "deb [arch=amd64 signed-by=/usr/share/keyrings/pgadmin4.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
+
+#curl -fsSL https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/pgadmin4.gpg
+
+# sudo apt update
+# sudo apt install pgadmin4-web
+
+# /var/lib/pgadmin est le répertoire des données dans pgadmin
+# Le réseau docker "bridge" va permettre a pgadmin de contacter le server postgres (donc normalement c'est good)
+- name: Create pgadmin directory
+  become: true
+  file:
+    path: /opt/pgadmin
+    state: directory
+    owner: root
+    group: root
+    mode: "711"
+
+- name: Create pgadmin volume
+  become: true
+  file:
+    path: /opt/pgadmin/data
+    state: directory
+    owner: 5050
+    group: 5050
+    mode: "755"
+
+- name: Deploy pgadmin container
+  become: true
+  docker_container:
+    name: pgadmin
+    image: dpage/pgadmin4
+    #auto_remove: true
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/pgadmin/data/:/var/lib/pgadmin
+    env:
+      PUID: '1001'
+      GUID: '1001'
+      PGADMIN_DEFAULT_EMAIL: "{{ pgadmin_email }}"
+      PGADMIN_DEFAULT_PASSWORD: "{{ pgadmin_password }}"
+    pull: true
+    #restart_policy: always
+    cap_drop:
+      - all
+    capabilities:
+      - setuid
+      - setgid
+      - dac_override
+      - net_bind_service
+    # security_opts:
+    #   - no-new-privilege

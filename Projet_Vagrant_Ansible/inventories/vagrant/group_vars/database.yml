@@ -1,0 +1,12 @@
+ansible_ssh_user: vagrant
+
+packages_needed:
+  - postgresql
+  - python3
+  - acl   # Permet de become_user: postgres afin d'executer des commandes shell psql
+
+database_name: labo_infra
+database_table: une_table
+database_user: postgres
+database_listening_port: '7290'
+database_listening_addresses: '*'

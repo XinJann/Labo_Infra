@@ -1,0 +1,27 @@
+- name: Copy file from source to destination
+  become: true
+  ansible.builtin.template:
+    src: postgresql.conf
+    dest: /etc/postgresql/15/main/postgresql.conf
+    owner: postgres
+    group: postgres
+    mode: '0644'
+
+- name: Copy file from source to destination
+  become: true
+  copy:
+    src: ../files/pg_hba.conf
+    dest: /etc/postgresql/15/main/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: '0640'
+
+# restart postgres après
+
+- name: restart service postgresql
+  become: true
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+    enabled: true
+

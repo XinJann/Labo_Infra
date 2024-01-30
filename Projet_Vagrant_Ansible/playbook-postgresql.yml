@@ -1,0 +1,7 @@
+---
+- name: Config VM database
+  hosts: database
+  roles:
+    - needed_packages
+    - postgres_config
+    - postgres_add_data

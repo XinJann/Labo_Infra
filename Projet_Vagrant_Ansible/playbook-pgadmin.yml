@@ -1,0 +1,7 @@
+---
+- name: Config VM database-master
+  hosts: database-master
+  become: true
+  roles:
+    - needed_packages
+    - pgadmin_install

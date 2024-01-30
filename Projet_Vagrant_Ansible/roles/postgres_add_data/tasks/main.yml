@@ -1,0 +1,15 @@
+
+- name: "Create database {{ database_name }}"
+  become: true
+  become_user: postgres
+  shell: "psql -c 'CREATE DATABASE {{ database_name }}'"
+
+- name: "Create table {{ database_table }}"
+  become: true
+  become_user: postgres
+  shell: "psql -c '\\c {{ database_name }}' -c 'CREATE TABLE {{ database_table }}(id SERIAL PRIMARY KEY,name VARCHAR(50))'" # à tester si SERIAL marche
+
+- name: "Insert row into the table {{ database_table }}"
+  become: true
+  become_user: postgres
+  shell: "psql -c '\\c {{ database_name }}' -c \"INSERT INTO {{ database_table }}(name) VALUES ('youhou')\""
