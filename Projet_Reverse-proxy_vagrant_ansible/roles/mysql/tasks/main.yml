@@ -1,0 +1,31 @@
+- name: create management network
+  docker_network:
+    name: management
+
+- name: create mysql volumes
+  file:
+    path: /opt/ansible/mysql/data
+    state: directory
+    owner: root
+    group: root
+    mode: '755'
+
+- name: Deploy mysql container
+  become: true
+  docker_container:
+    name: mysql
+    image: mysql:8.4
+    pull: true
+    restart_policy: always
+    volumes:
+      - /opt/ansible/mysql/data/:/var/lib/datadir/
+    networks:
+      - name: management
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mysql_password }}"
+    cap_drop:
+      - all
+    capabilities:
+      - setuid
+      - setgid
+      - dac_override

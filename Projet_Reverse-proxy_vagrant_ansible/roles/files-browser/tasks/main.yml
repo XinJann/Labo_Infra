@@ -1,0 +1,61 @@
+- name: create files network
+  docker_network:
+    name: files
+
+- name: create filebrowser volumes
+  file:
+    path: /opt/ansible/filebrowser/
+    state: directory
+    owner: root
+    group: root
+    mode: '755'
+
+- name: create filebrowser data volumes
+  file:
+    path: /opt/ansible/filebrowser/data
+    state: directory
+    owner: 2001
+    group: 2001
+    mode: '755'
+
+- name: create filebrowser root volumes
+  file:
+    path: /opt/ansible/filebrowser/root/
+    state: directory
+    owner: 2001
+    group: 2001
+    mode: '755'
+
+- name: touch file browser database
+  copy:
+    content: ""
+    dest: /opt/ansible/filebrowser/data/filebrowser.db
+    force: false
+    group: 2001
+    owner: 2001
+    mode: 0644
+
+- name: Run filebrowser Docker container
+  docker_container:
+    name: filebrowser
+    image: filebrowser/filebrowser:s6
+    ports:
+      - "{{ files_port }}:80"
+    volumes:
+      - /opt/ansible/filebrowser/data/filebrowser.db:/database/filebrowser.db
+      - /opt/ansible/filebrowser/root/:/srv/
+    env:
+      PUID: '2001'
+      PGID: '2001'
+    networks:
+      - name: files
+    restart_policy: always
+    pull: true
+    cap_drop:
+      - all
+    capabilities:
+      - setuid
+      - setgid
+      - chown
+    security_opts:
+      - no-new-privileges

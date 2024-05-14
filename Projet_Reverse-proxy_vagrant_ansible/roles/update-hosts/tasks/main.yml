@@ -1,0 +1,2 @@
+- name: add domain name in /etc/hosts of container
+  shell: docker exec -it kuma bash -c "echo -e \"192.168.57.2 webserver.ynov.com\n192.168.57.2 management.ynov.com\n192.168.57.2 files.ynov.com\" >> /etc/hosts"

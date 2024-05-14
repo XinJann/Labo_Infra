@@ -1,0 +1,42 @@
+---
+- name: Configure reverse-proxy
+  become: true
+  hosts: reverse-proxy
+  roles:
+    - needed_packages
+    - docker-debian12
+    - nginx
+
+- name: Configure webserver
+  become: true
+  hosts: webserver
+  roles:
+    - needed_packages
+    - docker-debian12
+    - caddy
+
+- name: Configure management
+  become: true
+  hosts: management
+  roles:
+    - needed_packages
+    - docker-debian12
+    - mysql
+    - phpmyadmin
+
+- name: Configure files
+  become: true
+  hosts: file-server
+  roles:
+    - needed_packages
+    - docker-debian12
+    - files-browser
+
+- name: Configure files
+  become: true
+  hosts: monitoring
+  roles:
+    - needed_packages
+    - docker-debian12
+    - uptime-kuma
+    - update-hosts

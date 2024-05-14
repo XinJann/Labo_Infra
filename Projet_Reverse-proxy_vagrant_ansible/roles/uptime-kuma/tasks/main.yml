@@ -1,0 +1,27 @@
+- name: create kuma network
+  docker_network:
+    name: kuma
+
+- name: Create a kuma volume
+  docker_volume:
+    name: kuma
+
+- name: Run filebrowser Docker container
+  docker_container:
+    name: kuma
+    image: louislam/uptime-kuma:debian
+    ports:
+      - "{{ monitoring_port }}:3001"
+    volumes:
+      - kuma:/app/data
+    networks:
+      - name: kuma
+    restart_policy: always
+    pull: true
+    cap_drop:
+      - all
+    capabilities:
+      - setuid
+      - setgid
+    security_opts:
+      - no-new-privileges

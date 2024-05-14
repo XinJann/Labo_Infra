@@ -1,0 +1,46 @@
+- name: create nginx network
+  docker_network:
+    name: nginx
+
+- name: create nginx volumes
+  file:
+    path: /opt/ansible/nginx/config
+    state: directory
+    owner: root
+    group: root
+    mode: '755'
+
+- name: copy nginx conf
+  template:
+    src: nginx.conf
+    dest: /opt/ansible/nginx/config/custom.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Deploy nginx container
+  become: true
+  docker_container:
+    name: nginx
+    image: nginx:bookworm-perl
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/ansible/nginx/config/:/etc/nginx/conf.d/
+    # env:
+    #   PUID: '2000'
+    #   GUID: '2000'
+    pull: true
+    restart_policy: always
+    networks:
+      - name: nginx
+    # cap_drop:
+    #   - all
+    # capabilities:
+    #   - chown # ?
+    #   - setuid
+    #   - setgid
+    #   - dac_override
+    #   - net_bind_service
+    # # security_opts:
+    # #   - no-new-privileges

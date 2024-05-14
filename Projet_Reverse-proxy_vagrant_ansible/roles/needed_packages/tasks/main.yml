@@ -1,0 +1,15 @@
+# Il faut become: true
+# - name: Upgrade all packages
+#   become: true
+#   ansible.builtin.apt:
+#     update_cache: true
+#     cache_valid_time: 3600
+#     name: "*"
+#     state: latest
+
+- name: Install needed packages (avec le module "package" car il n'est pas spécifique à un gestionnaire de paquets)
+  become: true
+  ansible.builtin.package:
+    name: '{{ item }}'
+    state: present
+  with_items: "{{ packages_needed }}"

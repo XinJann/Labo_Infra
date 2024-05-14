@@ -1,0 +1,68 @@
+- name: install docker deps
+  ansible.builtin.package:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+    - python3-docker
+
+# - name: add docker apt key
+#   apt_key:
+#     url: https://download.docker.com/linux/debian/gpg
+#     dest: /etc/apt/keyrings/docker.gpg
+#     state: present
+- name: download key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+
+- name: Change permission on myScript.sh file
+  file:
+    path: /etc/apt/keyrings/docker.asc
+    state: file
+    owner: root
+    group: root
+    mode: '+r'
+
+- name: add docker repo
+  apt_repository:
+    repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable
+    update_cache: true
+
+- name: install docker
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+  loop:
+    - containerd.io
+    - docker-ce
+    - docker-ce-cli
+  register: docker
+
+- name: install python-docker
+  apt:
+    name: python3-docker
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: enable docker
+  systemd:
+    name: docker
+    enabled: yes
+    masked: no
+
+- name: restart docker
+  systemd:
+    name: docker
+    state: restarted
+  when: docker.changed
+
+- name: start docker
+  systemd:
+    name: docker
+    state: started
+  when: not docker.changed

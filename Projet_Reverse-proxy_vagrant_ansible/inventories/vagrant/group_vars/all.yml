@@ -1,0 +1,13 @@
+ansible_ssh_user: vagrant
+
+webserver_domain: "webserver.ynov.com"
+webserver_port: "80"
+
+management_domain: "management.ynov.com"
+management_port: "8080"
+
+files_domain: "files.ynov.com"
+files_port: "80"
+
+monitoring_domain: "monitoring.ynov.com"
+monitoring_port: "80"

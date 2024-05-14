@@ -1,0 +1,22 @@
+- name: create caddy network
+  docker_network:
+    name: caddy
+
+
+- name: Deploy caddy container
+  become: true
+  docker_container:
+    name: caddy
+    image: caddy:latest
+    ports:
+      - "{{ webserver_port }}:80"
+    #pull: true
+    restart_policy: always
+    networks:
+      - name: caddy
+    cap_drop:
+      - all
+    capabilities:
+      - net_bind_service
+    # security_opts:
+    #   - no-new-privileges

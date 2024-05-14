@@ -1,0 +1,20 @@
+- name: create management network
+  docker_network:
+    name: management
+
+
+- name: Run phpMyAdmin Docker container
+  docker_container:
+    name: phpmyadmin
+    image: phpmyadmin:5.2.1
+    ports:
+      - "{{ management_port }}:80"
+    env:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: "{{ mysql_password }}"
+    networks:
+      - name: management
+    restart_policy: always
+    pull: true
+    cap_drop:
+      - all

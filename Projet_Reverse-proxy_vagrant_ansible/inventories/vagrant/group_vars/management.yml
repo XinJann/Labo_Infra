@@ -1,0 +1,4 @@
+packages_needed:
+  - python3
+
+mysql_password: "supermegaroot"
